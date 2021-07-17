@@ -1,0 +1,40 @@
+.UpcomingMovies{
+    background-color: #ff9999;
+    padding:8px;
+    text-align: center;
+    font-size: 1rem;
+}
+
+.ReleasedMovies{
+
+width:76%;
+margin:16px;
+
+}
+.FindMoviesBy{
+  
+    margin :16px;
+    width:24%;
+
+    }
+    .flex-container {
+        display: flex;
+      }
+.MovieListStyle{
+      overflow-x: auto;
+      flex-wrap: nowrap;
+}
+.HorizontalScroll{
+    height:250px;
+    overflow-x: scroll;
+
+}
+.ImageListItemUpcommingMovies{
+   height:250px;
+   width: 200px;
+ 
+
+   
+}
+
+
