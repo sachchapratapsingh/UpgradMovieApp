@@ -1,45 +1,40 @@
 
 import Header from '../../common/header/Header';
 import './Home.css';
-//import GridList from '@material-ui/core/GridList';
 import ImageList from '@material-ui/core/ImageList'
-//import Box from '@material-ui/core/Box';
 import ImageListItem from '@material-ui/core/ImageListItem';
 import ImageListItemBar from '@material-ui/core/ImageListItemBar';
-import ListSubheader from '@material-ui/core/ListSubheader';
-import IconButton from '@material-ui/core/IconButton';
-import InfoIcon from '@material-ui/icons/Info';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import TextField from '@material-ui/core/TextField';
 import Input from '@material-ui/core/Input';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
-import FormHelperText from '@material-ui/core/FormHelperText';
-//import MovieList from '../../common/MovieList/MovieList';
 import React from 'react';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import Checkbox from '@material-ui/core/Checkbox';
-import Genres from './findMoviesBy';
-import Details from '../details/Details';
 import Button from '@material-ui/core/Button';
+import { Typography } from '@material-ui/core';
+import { Switch,Link, Route } from "react-router-dom";
+
+
 
 
 export default class Home extends React.Component {
+  
   constructor(props) {
     super(props);
     this.state = {
-      error: null,
-     
+      error: null,      
       movies: [],
       genres: [],
       artists:[],
       findByMovieName: '',
       findByMovieStartDate: '',
       findByMovieEndDate: '',
-      findByMovieGenre: '',
-      findByMovieArtists: {},
+      findByMovieGenre: [],
+      findByMovieArtists: [{}],
       releasedMovies:[]
     };
   }
@@ -55,15 +50,6 @@ export default class Home extends React.Component {
             movies: result.movies
           });
         },
-        // Note: it's important to handle errors here
-        // instead of a catch() block so that we don't swallow
-        // exceptions from actual bugs in components.
-        (error) => {
-          this.setState({
-            
-            error
-          });
-        }
       )
       fetch("http://localhost:8085/api/v1/genres")     
       
@@ -75,15 +61,7 @@ export default class Home extends React.Component {
             genres: result.genres
           });
         },
-        // Note: it's important to handle errors here
-        // instead of a catch() block so that we don't swallow
-        // exceptions from actual bugs in components.
-        (error) => {
-          this.setState({
-           
-            error
-          });
-        }
+
       )
       fetch("http://localhost:8085/api/v1/artists")
     
@@ -95,15 +73,7 @@ export default class Home extends React.Component {
             artists: result.artists
           });
         },
-        // Note: it's important to handle errors here
-        // instead of a catch() block so that we don't swallow
-        // exceptions from actual bugs in components.
-        (error) => {
-          this.setState({
-           
-            error
-          });
-        }
+
       )
       fetch("http://localhost:8085/api/v1/movies?page=1&limit=17&status=released")     
       
@@ -114,16 +84,8 @@ export default class Home extends React.Component {
             
             releasedMovies: result.movies
           });
-        },
-        // Note: it's important to handle errors here
-        // instead of a catch() block so that we don't swallow
-        // exceptions from actual bugs in components.
-        (error) => {
-          this.setState({
-           
-            error
-          });
         }
+
       )
   }
 
@@ -133,10 +95,14 @@ export default class Home extends React.Component {
     const upcomingMovies = movies.filter( (movie) => movie.status === 'PUBLISHED');
     var Movies1 = movies.filter( (moviee) => moviee.status === 'RELEASED');
 
+   
+    
+    
     const handleChangeName= (evt) => {  
       this.setState({ findByMovieName: evt.target.value});
     };
     const handleChangeGenre= (evt) => {  
+     
       this.setState({  findByMovieGenre:evt.target.value });
     };
     const handleChangeStartDate= (evt) => {  
@@ -150,31 +116,26 @@ export default class Home extends React.Component {
     };
     
     const applyHandler = () => { 
-      // alert("event clicked")
-    
+  
      if(findByMovieName.length>0)
      Movies1=Movies1.filter((moviee) =>moviee.title===findByMovieName);
      if(findByMovieGenre.length>0)
-     Movies1=Movies1.filter((moviee) =>moviee.genres.includes(findByMovieGenre));
+     Movies1=Movies1.filter((moviee) =>moviee.genres.some(x=>findByMovieGenre.includes(x)));
      if(findByMovieArtists.length>0)
-     Movies1=Movies1.filter((moviee) =>moviee.artists.some(x=>findByMovieArtists.id===x.id));
+     Movies1=Movies1.filter((moviee) =>moviee.artists.some(x=>findByMovieArtists.includes(x.id)));
      if(findByMovieStartDate.length>0)
      Movies1=Movies1.filter((moviee) =>moviee.release_date>findByMovieStartDate);
     
      if(findByMovieEndDate.length>0){
      Movies1=Movies1.filter((moviee) =>moviee.release_date<findByMovieEndDate);
-     
     
     }
      this.setState({ releasedMovies: Movies1 });
      };
 
-    if (error) {
-      return <div>Error: {error.message}</div>;
-    } else {
       return (
-
-        <div>
+      
+        <div >
           <Header/>
             <div className="UpcomingMovies">Upcoming Movies</div>
             <div >
@@ -182,8 +143,8 @@ export default class Home extends React.Component {
         <ImageList className="HorizontalScroll"  rowHeight={250}  rows={1} cols={6} gap={8} >
     
     {upcomingMovies.map((movie) => (
-      <ImageListItem className="ImageListItemUpcommingMovies"  key={movie.poster_url} >
- <img className="ImageListItemUpcommingMovies" srcSet={movie.poster_url}
+      <ImageListItem key={movie.poster_url} >
+ <img srcSet={movie.poster_url} height='250px' 
           alt={movie.title}
           
         />
@@ -197,16 +158,17 @@ export default class Home extends React.Component {
   </ImageList>
   </div>
   <div className="flex-container">
-   <div className="ReleasedMovies " >
+   <div className="ReleasedMovies" >
      
    <ImageList cols={4} gap={18} >
       
       { releasedMovies.map((movie) => (
+        
         <ImageListItem style={{cursor: 'pointer',height:'350px'}} key={movie.poster_url} >
-          <img srcSet={movie.poster_url}
+         <Link to={"/movie/"+movie.id}> <img srcSet={movie.poster_url} height='350px'
             alt={movie.title}
             
-          />
+          /></Link>
           <ImageListItemBar
             title={movie.title}
             subtitle={<span>Release Date: {movie.release_date}</span>}          
@@ -217,50 +179,47 @@ export default class Home extends React.Component {
     </ImageList>
 
       </div>
-   <div className="FindMoviesBy ">
+   <div className="FindMoviesBy " >
+  
    <Card>
-       <CardHeader style={{color :'theme.palette.primary.light'}}
+       <CardHeader className='FindMoviesByComponents' style={{color:'#a6d4fa'}}
           
           title="FIND MOVIES BY:" 
           
         />
-  <FormControl>
-    <InputLabel htmlFor="my-input">Movie Name</InputLabel>
-    <Input value={findByMovieName} onChange={handleChangeName} id="findByMovieName" />
+      
+    <FormControl>
+    <InputLabel >Movie Name</InputLabel>
+    <Input value={findByMovieName} className='FindMoviesByComponents' onChange={handleChangeName} />
     </FormControl>
+ 
     <br />
     <br />
     <FormControl >
-  <InputLabel  id="label">Genres</InputLabel>
-
-  <Select value={findByMovieGenre} name="findByMovieGenre" onChange={handleChangeGenre} style={{margin:'20px', width:'240px'}} >
+  <InputLabel className='FindMoviesByComponents'>Genres</InputLabel>
+  <Select multiple value={findByMovieGenre} onChange={handleChangeGenre} className='FindMoviesByComponents' >
   <MenuItem value={''}>
-                   <span> </span>
-                  </MenuItem>
-              {genres.map((genre) => (
+  <span> </span>
+  </MenuItem>
+   {genres.map((genre) => (
 
-                <MenuItem key={genre.genre} value={genre.genre}>
-                   <span> {genre.genre}</span>
-                  </MenuItem>
-                    
-                    
-                      ))}
+    <MenuItem key={genre.genre} value={genre.genre}><Checkbox  ></Checkbox>
+     <span> {genre.genre}</span>
+     </MenuItem>
+))}
                     
                     </Select>
                     </FormControl>
  <br />
  <br />
-    <FormControl  >
-  <InputLabel id="label">Artists</InputLabel>
-  <Select value={findByMovieArtists} onChange={handleChangeArtists} name="findByMovieArtists">
+  <FormControl>
+  <InputLabel className='FindMoviesByComponents' >Artists</InputLabel>
+  <Select multiple className='FindMoviesByComponents' value={findByMovieArtists} onChange={handleChangeArtists} >
   <MenuItem value={''} >
-
 <span> </span>
 </MenuItem>
-
  {artists.map((artist) => (
-          
-<MenuItem key={artist} value={artist}>  
+<MenuItem key={artist.id} value={artist.id} ><Checkbox  ></Checkbox>
 <span>{artist.first_name} {artist.last_name}</span>
 </MenuItem>
    ))}
@@ -268,9 +227,10 @@ export default class Home extends React.Component {
  </FormControl>
   <br />
  <br />
+ 
     <FormControl>
-                    <TextField 
-    id="findByMovieStartDate"
+    <TextField style={{maxWidth:'240px',minWidth:'240px', margin:'8px'}}
+   
     label="Release Date Start"
     type="date"
     defaultValue="dd-mm-yyyy"
@@ -285,13 +245,14 @@ export default class Home extends React.Component {
 <br />
  <br />
     <FormControl >
-    <TextField 
-    id="findByMovieEndDate"
+    <TextField style={{maxWidth:'240px',minWidth:'240px', margin:'8px'}}
+    
     label="Release Date End"
     type="date"
     defaultValue="dd-mm-yyyy"
     value={findByMovieEndDate} onChange={handleChangeEndDate} 
     InputLabelProps={{
+      
       shrink: true,
     }}
   />
@@ -299,233 +260,19 @@ export default class Home extends React.Component {
 </FormControl>
 <br />
 <br />
-<Button   variant="contained" color="primary" onClick={applyHandler}>
+
+<Button  style={{maxWidth:'240px',minWidth:'240px', margin:'8px'}} variant="contained" color="primary" onClick={applyHandler}>
   APPLY
 </Button>
+
        </Card>
+   
    </div>
    </div>
  
       </div>
-      
+     
       );
     }
-  }
-
-     
-    }
-  
-
-/*
-
-const Home = () => {
-	const [movies, setMovies] = useState([]);
-	const [favourites, setFavourites] = useState([]);
-	const [searchValue, setSearchValue] = useState('');
-
-	const getMovieRequest = async (searchValue) => {
-		const url = `http://www.omdbapi.com/?s=star wars&apikey=263d22d8`;
-
-		const response = await fetch(url);
-		const responseJson = await response.json();
-
-		if (responseJson.Search) {
-			setMovies(responseJson.Search);
-		}
-	};
-
-	useEffect(() => {
-		getMovieRequest(searchValue);
-	}, [searchValue]);
-
-	useEffect(() => {
-		const movieFavourites = JSON.parse(
-			localStorage.getItem('react-movie-app-favourites')
-		);
-
-		if (movieFavourites) {
-			setFavourites(movieFavourites);
-		}
-	}, []);
-
-	const saveToLocalStorage = (items) => {
-		localStorage.setItem('react-movie-app-favourites', JSON.stringify(items));
-	};
-
-	const addFavouriteMovie = (movie) => {
-		const newFavouriteList = [...favourites, movie];
-		setFavourites(newFavouriteList);
-		saveToLocalStorage(newFavouriteList);
-	};
-
-	const removeFavouriteMovie = (movie) => {
-		const newFavouriteList = favourites.filter(
-			(favourite) => favourite.imdbID !== movie.imdbID
-		);
-
-		setFavourites(newFavouriteList);
-		saveToLocalStorage(newFavouriteList);
-	};
-
-	return (
-		<div className='container-fluid movie-app'>
-
-			<div className='row'>
-				<MovieList
-					movies={movies}
-				/>
-			</div>
-		
-			</div>
-	);
-};
-
-
-
-
-/*
-export default class Home extends React.Component {
- 
-
-   render() {
-    const classes = useStyles();
-      return (
-         <div>
-            <Header/>
-            <div className="UpcomingMovies">Upcoming Movies</div>
-            <div >
-            <ImageList style={{height:250,overflowX:'auto', flexWrap:'nowrap'}} rowHeight={250}  rows= {1} cols={6} gap={8} >
-      
-      {itemData.map((item) => (
-        <ImageListItem rows={1} key={item.img} >
-
-
-
-          	
-          <img srcSet={`${item.img}?h=250px&fit=fill`}
-            alt={item.title}
-            
-          />
-          <ImageListItemBar
-            title={item.title}
-                     
-            
-          />
-        </ImageListItem>
-      ))}
-    </ImageList>
-
-   </div>
-   <div className="flex-container">
-   <div className="ReleasedMovies " >
-     
-   <ImageList cols={4} gap={18} >
-      
-      {itemData.map((item) => (
-        <ImageListItem style={{cursor: 'pointer',height:'350px'}} key={item.img} >
-          <img srcSet={`${item.img}?h=350px&fit=fill`}
-            alt={item.title}
-            
-          />
-          <ImageListItemBar
-            title={item.title} 
-            subtitle={<span>Release Date: {item.date}</span>}          
-            
-          />
-        </ImageListItem>
-      ))}
-    </ImageList>
-
-      </div>
-   <div className="FindMoviesBy ">
-     <Card>
-     <CardHeader style={{color:'#a6d4fa'}}
-        
-        title="FIND MOVIES BY:" 
-        
-      />
-<FormControl>
-  <InputLabel htmlFor="my-input">Email address</InputLabel>
-  <Input id="my-input" aria-describedby="my-helper-text" margin='theme.spacing.unit'/>
-
-
-</FormControl>
-<InputLabel id="label">Age</InputLabel>
-<Select labelId="label" id="select" value="20">
-  <MenuItem value="10"><Checkbox
-  value="checkedA"
-  inputProps={{ 'aria-label': 'Checkbox A' }}
-/>Ten</MenuItem>
-  <MenuItem value="20">Twenty</MenuItem>
-</Select>
-     </Card>
-   </div>
-   </div>             
-         </div>
-      );
-   }
-}
-const itemData = [
-  {
-    img: 'https://i.pinimg.com/originals/3a/6a/2b/3a6a2bd9a83283cd6ef230ab6a1df4dc.jpg',
-    title: 'Breakfast',
-    date: '12-12-2021',
-  },
-  {
-    img: 'https://images.unsplash.com/photo-1551782450-a2132b4ba21d',
-    title: 'Burger',
-    author: '@rollelflex_graphy726',
-  },
-  {
-    img: 'https://images.unsplash.com/photo-1522770179533-24471fcdba45',
-    title: 'Camera',
-    author: '@helloimnik',
-  },
-  {
-    img: 'https://images.unsplash.com/photo-1444418776041-9c7e33cc5a9c',
-    title: 'Coffee',
-    author: '@nolanissac',
-  },
-  {
-    img: 'https://images.unsplash.com/photo-1533827432537-70133748f5c8',
-    title: 'Hats',
-    author: '@hjrc33',
-  },
-  {
-    img: 'https://images.unsplash.com/photo-1558642452-9d2a7deb7f62',
-    title: 'Honey',
-    author: '@arwinneil',
+  }     
     
-  },
-  {
-    img: 'https://images.unsplash.com/photo-1516802273409-68526ee1bdd6',
-    title: 'Basketball',
-    author: '@tjdragotta',
-  },
-  {
-    img: 'https://images.unsplash.com/photo-1518756131217-31eb79b20e8f',
-    title: 'Fern',
-    author: '@katie_wasserman',
-  },
-  {
-    img: 'https://images.unsplash.com/photo-1597645587822-e99fa5d45d25',
-    title: 'Mushrooms',
-    author: '@silverdalex',
-  },
-  {
-    img: 'https://images.unsplash.com/photo-1567306301408-9b74779a11af',
-    title: 'Tomato basil',
-    author: '@shelleypauls',
-  },
-  {
-    img: 'https://images.unsplash.com/photo-1471357674240-e1a485acb3e1',
-    title: 'Sea star',
-    author: '@peterlaster',
-  },
-  {
-    img: 'https://images.unsplash.com/photo-1589118949245-7d38baf380d6',
-    title: 'Bike',
-    author: '@southside_customs',
-  },
-];
-*/

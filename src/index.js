@@ -4,8 +4,7 @@ import './index.css';
 import 'typeface-roboto';
 import registerServiceWorker from './registerServiceWorker';
 import Controller from './screens/Controller.js';
+import { BrowserRouter } from "react-router-dom";
 
-
-
-ReactDOM.render(<Controller />, document.getElementById('root'));
+ReactDOM.render( <BrowserRouter baseUrl="http://localhost:8085/api/v1"><Controller/></BrowserRouter>  , document.getElementById('root'));
 registerServiceWorker();

@@ -32,10 +32,10 @@ const BookShow = (props) => {
   const [showDates, setShowDates] = useState([]);
   const [originalShows, setOriginalShows] = useState([]);
   const [showId, setShowId] = useState("");
-
+  
   useEffect(() => {
     let dataShows = null;
-
+ 
     fetch(props.baseUrl + "movies/" + props.match.params.id + "/shows", {
       method: "GET",
       headers: {

@@ -11,20 +11,24 @@ import CardContent from "@material-ui/core/CardContent";
 import Snackbar from "@material-ui/core/Snackbar";
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
-import { withStyles } from "@material-ui/core/styles";
+import { withStyles } from "@material-ui/styles";
 import PropTypes from "prop-types";
 import CheckCircleIcon from "@material-ui/icons/CheckCircle";
 import green from "@material-ui/core/colors/green";
 import { Link } from "react-router-dom";
 
+
+
+
+
+
+
 const styles = (theme) => ({
-  close: {
+  root: {
     width: theme.spacing.unit * 4,
     height: theme.spacing.unit * 4,
   },
-  success: {
-    color: green[600],
-  },
+ 
 });
 
 const Confirmation = (props) => {

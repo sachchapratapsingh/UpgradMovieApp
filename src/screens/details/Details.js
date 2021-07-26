@@ -1,59 +1,75 @@
 
+import Header from '../../common/header/Header';
+import React from 'react';
+import { Typography } from '@material-ui/core';
+import { Link } from "react-router-dom";
 
-import React, { useState, useEffect } from 'react';
-
-import './Details.css';
 
 
-import SearchBox from './SearchBox';
-const MovieList = (props) => {
-	return (
-		<div>
-			{props.movies.map((movie, index) => (
-				<div className='image-container d-flex justify-content-start m-3'>
-					<img src={movie.Poster} alt='movie'></img>
-					<div className='overlay d-flex align-items-center justify-content-center'>
-						{movie.title}
-					</div>
-				</div>
-			))}
-		</div>
-	);
-};
+export default class Details extends React.Component {
+  
+  constructor(props) {
+    super(props);
+    this.state = {
+        
+    movies: [],
+	  Movie1:{}
+  
+    };
+  }
 
-const Details = () => {
-	const [movies, setMovies] = useState([]);
-	const [searchValue, setSearchValue] = useState('');
+  componentDidMount() {
+    fetch("http://localhost:8085/api/v1/movies?page=1&limit=17")
+    
+      .then(res => res.json())
+      .then(
+        (result) => {
+          this.setState({
+           
+            movies: result.movies,
+			
+          });
+        }
+      )
+      
+  }
 
-	const getMovieRequest = async (searchValue) => {
-		const url = `http://www.omdbapi.com/?s=${searchValue}&apikey=263d22d8`;
+  render() {
+	let { movies, Movie1 } = this.state;
+	
+    
+   Movie1 = movies.filter( (moviee) => moviee.status === 'RELEASED');
 
-		const response = await fetch(url);
-		const responseJson = await response.json();
+      return (
+        <div ><div>	
+			<Header/>
+    
+	 <Typography className="back">
+	 <Link to="/home">
+            &#60; Back to Home
+          </Link>
+		  </Typography>
+		  </div>	
+		  <div className="outerPart">
+		  <div className="part1">    
+		  {Movie1.map((movie) => (
+   
+ <img srcSet={movie.poster_url} height='250px' 
+          alt={movie.title}
+          
+        />
+    
+    ))}
+ 
+	  </div>
+		  <div className="part2"><h2>{this.props.id}</h2></div>
+		  <div className="part3">{this.props.id}</div>
+		  </div>
 
-		if (responseJson.Search) {
-			setMovies(responseJson.Search);
-		}
-	};
+  </div>
+      );
+    }
+  }
 
-	useEffect(() => {
-		getMovieRequest(searchValue);
-	}, [searchValue]);
-
-	return (
-		<div className='container-fluid movie-app'>
-			<div className='row d-flex align-items-center mt-4 mb-4'>
-				
-				<SearchBox searchValue={searchValue} setSearchValue={setSearchValue} />
-			</div>
-			<div className='row'>
-			<MovieList
-					movies={movies}
-		
-				/>
-			</div>
-		</div>
-	);
-};
-
-export default Details;
+     
+    

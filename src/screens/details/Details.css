@@ -1,0 +1,30 @@
+.back{
+    margin-left: 24px;
+    margin-top: 8px;
+    margin-bottom: 0px;
+    height: 24px;
+    cursor: pointer;
+}
+.part1{
+    width: 20%;
+    height: 24px;
+    background-color: aqua;
+}
+
+.part2{
+    width: 60%;
+    background-color: aqua;
+    height: 200px;
+
+}
+.part3{
+    width:20%;
+    height: 200px;
+    background-color: aqua;
+}
+.outerPart{
+   
+    height: 200px;
+    background-color: aqua;
+
+}
