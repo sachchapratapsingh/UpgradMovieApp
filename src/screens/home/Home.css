@@ -26,7 +26,9 @@ margin:16px;
 }
 .HorizontalScroll{
     height:250px;
-    overflow-x: scroll;
+    flex-wrap:nowrap;
+    transform: translateZ(0);
+
 
 }
 .ImageListItemUpcommingMovies{

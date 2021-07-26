@@ -15,8 +15,7 @@ import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import Checkbox from '@material-ui/core/Checkbox';
 import Button from '@material-ui/core/Button';
-import { Typography } from '@material-ui/core';
-import { Switch,Link, Route } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 
 
@@ -26,7 +25,7 @@ export default class Home extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      error: null,      
+         
       movies: [],
       genres: [],
       artists:[],
@@ -91,7 +90,7 @@ export default class Home extends React.Component {
 
   render() {
     const{movies}=this.state;
-    var { error,  genres, artists, findByMovieName,findByMovieGenre, findByMovieArtists,findByMovieStartDate,findByMovieEndDate, releasedMovies } = this.state;
+    var { genres, artists, findByMovieName,findByMovieGenre, findByMovieArtists,findByMovieStartDate,findByMovieEndDate, releasedMovies } = this.state;
     const upcomingMovies = movies.filter( (movie) => movie.status === 'PUBLISHED');
     var Movies1 = movies.filter( (moviee) => moviee.status === 'RELEASED');
 
